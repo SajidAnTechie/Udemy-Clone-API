@@ -1,0 +1,22 @@
+{
+  "name": "devcamper",
+  "version": "1.0.0",
+  "description": "Devcamper Api",
+  "main": "app.js",
+  "scripts": {
+    "start": "NODE_ENV=production node app.js",
+    "dev": "nodemon app"
+  },
+  "author": "Sajid Ansari",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "colors": "^1.4.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.19",
+    "node-geocoder": "^3.27.0",
+    "slugify": "^1.4.0"
+  }
+}
