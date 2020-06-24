@@ -12,8 +12,10 @@ connectDb();
 app.use(express.json());
 
 const bootcampRouter = require("./routes/bootcamp");
+const courseRouter = require("./routes/course");
 
 app.use("/api/v1/bootcamp", bootcampRouter);
+app.use("/api/v1/course", courseRouter);
 
 app.use(unknownEndpoints);
 app.use(errorHandler);

@@ -22,10 +22,12 @@ const getAllbootcamps = asyncHandler(async (req, res, next) => {
 
   //Create operators ($gt,gte,lt,lte)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)/g, (match) => `$${match}`);
-  console.log(JSON.parse(queryStr));
 
   //Finding resource
-  query = Bootcamp.find(JSON.parse(queryStr));
+  query = Bootcamp.find(JSON.parse(queryStr)).populate({
+    path: "Courses",
+    select: "title description",
+  });
 
   //Select
   if (req.query.select) {
@@ -46,10 +48,8 @@ const getAllbootcamps = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 25;
   const startIndex = (page - 1) * limit;
-  console.log(startIndex);
 
   const endIndex = page * limit;
-  console.log(endIndex);
   const total = await Bootcamp.countDocuments();
 
   query = query.skip(startIndex).limit(limit);
@@ -118,11 +118,12 @@ const updateBootcamps = asyncHandler(async (req, res, next) => {
 });
 
 const deleteBootcamps = asyncHandler(async (req, res, next) => {
-  const deleteBootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const deleteBootcamp = await Bootcamp.findById(req.params.id);
 
   if (!deleteBootcamp)
     throw createError(404, `Bootcamp is not found of id ${req.params.id}`);
 
+  await deleteBootcamp.remove();
   res.status(204).send({
     status: "success",
     data: {},
