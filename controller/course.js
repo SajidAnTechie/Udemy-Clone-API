@@ -67,11 +67,12 @@ const updateCourse = asyncHandler(async (req, res, next) => {
 });
 
 const deleteCourse = asyncHandler(async (req, res, next) => {
-  const deleteCourse = await Course.findByIdAndDelete(req.params.id);
+  const deleteCourse = await Course.findById(req.params.id);
 
   if (!deleteCourse)
     throw createError(404, `Course is not found with id of ${req.params.id}`);
 
+  await deleteCourse.remove();
   res.status(204).send({ status: "success", data: {} });
 });
 
