@@ -4,30 +4,31 @@ const Course = require("../models/Course");
 const Bootcamp = require("../models/Bootcamp");
 
 const getCourses = asyncHandler(async (req, res, next) => {
-  let query;
-  const { bootcamp } = req.params;
+  const { bootcampId } = req.params;
 
-  if (bootcamp) {
-    const findBootcamp = await Bootcamp.findById(bootcamp);
+  if (req.params.bootcampId) {
+    const findBootcamp = await Bootcamp.findById(req.params.bootcampId);
     if (!findBootcamp)
-      throw createError(404, `Bootcamp is not found with id of ${bootcamp}`);
+      throw createError(
+        404,
+        `Bootcamp is not found with id of ${req.params.bootcampId}`
+      );
 
-    query = Course.find({ bootcamp: bootcamp }).populate({
+    const bootcampCourses = await Course.find({
+      bootcamp: req.params.bootcampId,
+    }).populate({
       path: "bootcamp",
       select: "name description",
+    });
+
+    return res.status(200).send({
+      status: "success",
+      count: bootcampCourses.length,
+      data: bootcampCourses,
     });
   } else {
-    query = Course.find().populate({
-      path: "bootcamp",
-      select: "name description",
-    });
+    res.status(200).send(res.advanceResults);
   }
-
-  const courses = await query;
-
-  res
-    .status(200)
-    .send({ status: "success", count: courses.length, data: courses });
 });
 
 const getCourse = asyncHandler(async (req, res, next) => {

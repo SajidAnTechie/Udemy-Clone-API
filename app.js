@@ -3,6 +3,10 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const { unknownEndpoints, errorHandler } = require("./middleware/error");
 const connectDb = require("./config/db");
+const fileUpload = require("express-fileupload");
+const bootcampRouter = require("./routes/bootcamp");
+const courseRouter = require("./routes/course");
+const path = require("path");
 const app = express();
 
 dotenv.config({ path: "./config/config.env" });
@@ -11,8 +15,9 @@ connectDb();
 
 app.use(express.json());
 
-const bootcampRouter = require("./routes/bootcamp");
-const courseRouter = require("./routes/course");
+app.use(fileUpload());
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/bootcamp", bootcampRouter);
 app.use("/api/v1/course", courseRouter);
