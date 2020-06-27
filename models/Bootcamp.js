@@ -25,7 +25,19 @@ const BootcampSchema = new mongoose.Schema(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
         "Please privode a valid URL with HTTP or HTTPS",
       ],
-      required: [true, "Please provide URL link"],
+    },
+    phone: {
+      type: String,
+      maxlength: [20, "Phone number cannot be longer than 20 character"],
+      required: [true, "Please add a phone number"],
+    },
+    email: {
+      type: String,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please add a valid email",
+      ],
+      required: [true, "Please add a email"],
     },
     address: {
       type: String,

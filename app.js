@@ -4,8 +4,10 @@ const colors = require("colors");
 const { unknownEndpoints, errorHandler } = require("./middleware/error");
 const connectDb = require("./config/db");
 const fileUpload = require("express-fileupload");
+const cookieParser = require("cookie-parser");
 const bootcampRouter = require("./routes/bootcamp");
 const courseRouter = require("./routes/course");
+const authRouter = require("./routes/auth");
 const path = require("path");
 const app = express();
 
@@ -16,11 +18,12 @@ connectDb();
 app.use(express.json());
 
 app.use(fileUpload());
-
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/bootcamp", bootcampRouter);
 app.use("/api/v1/course", courseRouter);
+app.use("/api/v1/auth", authRouter);
 
 app.use(unknownEndpoints);
 app.use(errorHandler);

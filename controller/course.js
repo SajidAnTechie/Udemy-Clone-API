@@ -44,14 +44,14 @@ const getCourse = asyncHandler(async (req, res, next) => {
 });
 
 const createCourse = asyncHandler(async (req, res, next) => {
-  const { bootcamp } = req.params;
+  const { bootcampId } = req.params;
 
-  const findBootcamp = await Bootcamp.findById(bootcamp);
+  const findBootcamp = await Bootcamp.findById(bootcampId);
 
   if (!findBootcamp)
-    throw createError(404, `Bootcamp is not found with id of ${bootcamp}`);
+    throw createError(404, `Bootcamp is not found with id of ${bootcampId}`);
 
-  const newCourse = await Course.create({ ...req.body, bootcamp: bootcamp });
+  const newCourse = await Course.create({ ...req.body, bootcamp: bootcampId });
 
   res.status(201).send({ status: "success", data: newCourse });
 });
