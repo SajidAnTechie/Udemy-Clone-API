@@ -18,12 +18,38 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 });
 
 const createBootcamps = asyncHandler(async (req, res, next) => {
-  const newBootcamp = await Bootcamp.create(req.body);
+  //check if user has one bootcamp
+
+  const bootcamp = await Bootcamp.findOne({ user: req.user._id });
+
+  //If user is not admin,then he can add one bootcamp
+  if (bootcamp && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The User with id ${req.user._id} has already published a bootcamp`
+    );
+
+  const newBootcamp = await Bootcamp.create({
+    ...req.body,
+    user: req.user._id,
+  });
 
   res.status(201).send({ status: "success", data: newBootcamp });
 });
 
 const updateBootcamps = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamp.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  //check if user is owner of the bootcamp or is admin
+  if (!bootcamp && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The User with ${req.user._id} is not allowed to acces this route`
+    );
+
   const editBootcamp = await Bootcamp.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -49,6 +75,18 @@ const deleteBootcamps = asyncHandler(async (req, res, next) => {
 
   if (!deleteBootcamp)
     throw createError(404, `Bootcamp is not found of id ${req.params.id}`);
+
+  const bootcamp = await Bootcamp.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  //check if user is owner of the bootcamp or is admin
+  if (!bootcamp && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The User with ${req.user._id} is not allowed to acces this route`
+    );
 
   await deleteBootcamp.remove();
   res.status(204).send({
@@ -80,10 +118,22 @@ const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 });
 
 const bootcampUploadPhoto = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findById(req.params.id);
+  const findbootcamp = await Bootcamp.findById(req.params.id);
 
-  if (!bootcamp)
+  if (!findbootcamp)
     throw createError(404, `Bootcamp is not found with id of ${req.params.id}`);
+
+  const bootcamp = await Bootcamp.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  //check if user is owner of the bootcamp or is admin
+  if (!bootcamp && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The User with ${req.user._id} is not allowed to acces this route`
+    );
 
   if (!req.files) throw createError(400, "Please add a photo");
 

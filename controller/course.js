@@ -51,12 +51,41 @@ const createCourse = asyncHandler(async (req, res, next) => {
   if (!findBootcamp)
     throw createError(404, `Bootcamp is not found with id of ${bootcampId}`);
 
-  const newCourse = await Course.create({ ...req.body, bootcamp: bootcampId });
+  const bootcamp = await Bootcamp.findOne({
+    _id: bootcampId,
+    user: req.user._id,
+  });
+
+  //check if owner of bootcamp can add course to if or admin
+  if (!bootcamp && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The user with id ${req.user._id} is not allowed to add the course to bootcamp of id ${bootcampId}`
+    );
+
+  const newCourse = await Course.create({
+    ...req.body,
+    bootcamp: bootcampId,
+    user: req.user._id,
+  });
 
   res.status(201).send({ status: "success", data: newCourse });
 });
 
 const updateCourse = asyncHandler(async (req, res, next) => {
+  //Check if user is owner of the course
+
+  const findCourse = await Course.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  if (!findCourse && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The user with id ${req.user._id} is not allowed to update the course of id ${req.params.id}`
+    );
+
   const editCourse = await Course.findByIdAndUpdate(req.params.id, req.body);
 
   if (!editCourse)
@@ -72,6 +101,18 @@ const deleteCourse = asyncHandler(async (req, res, next) => {
 
   if (!deleteCourse)
     throw createError(404, `Course is not found with id of ${req.params.id}`);
+
+  //Check if user is owner of the course
+  const findCourse = await Course.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  if (!findCourse && req.user.role !== "Admin")
+    throw createError(
+      400,
+      `The user with id ${req.user._id} is not allowed to delete the course of id ${req.params.id}`
+    );
 
   await deleteCourse.remove();
   res.status(204).send({ status: "success", data: {} });
