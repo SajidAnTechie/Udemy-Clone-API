@@ -20,6 +20,47 @@ const login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+//Update user details
+
+const updateDetails = asyncHandler(async (req, res, next) => {
+  const newDetails = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const editDetails = await User.findByIdAndUpdate(req.user._id, newDetails, {
+    new: true,
+    runValidators: true,
+  });
+
+  const updateDetails = await User.findById(req.user._id);
+  res.status(200).send({ status: "success", data: updateDetails });
+});
+
+//Update Password
+
+const updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select("+password");
+
+  //compare currentPassword
+
+  const isMatch = await user.matchPassword(req.body.currentPassword);
+  console.log(isMatch);
+  if (!isMatch)
+    throw createError(
+      400,
+      `Current password ${req.body.currentPassword} does't match`
+    );
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
+});
+
+//Forgot Password
+
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.genAuthToken();
 
@@ -43,4 +84,6 @@ const sendTokenResponse = (user, statusCode, res) => {
 module.exports = {
   RegisterUser,
   login,
+  updateDetails,
+  updatePassword,
 };
