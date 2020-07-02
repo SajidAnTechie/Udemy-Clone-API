@@ -3,10 +3,10 @@ const verifyToken = require("../utilis/jwt");
 const asyncHandler = require("../middleware/async");
 const User = require("../models/User");
 
-const Protect = asyncHandler(async (req, res, next) => {
+const protect = asyncHandler(async (req, res, next) => {
   const authorization = req.headers["authorization"];
   if (!(authorization && authorization.toLowerCase().startsWith("bearer")))
-    throw createError(401, "Invalid token or token not found");
+    throw createError(401, "Not authorize");
 
   const token = authorization.split(" ")[1];
 
@@ -17,13 +17,13 @@ const Protect = asyncHandler(async (req, res, next) => {
   next();
 });
 
-const Permission = (...roles) => (req, res, next) => {
+const permission = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user.role))
     throw createError(
       401,
-      `${req.user.role} role user is not allowed to access this route`
+      `User role ${req.user.role}  is not allowed to access this resource`
     );
 
   next();
 };
-module.exports = { Protect, Permission };
+module.exports = { protect, permission };

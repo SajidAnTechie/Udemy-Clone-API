@@ -58,10 +58,7 @@ const createCourse = asyncHandler(async (req, res, next) => {
 
   //check if owner of bootcamp can add course to if or admin
   if (!bootcamp && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The user with id ${req.user._id} is not allowed to add the course to bootcamp of id ${bootcampId}`
-    );
+    throw createError(400, "Not authorize to add course to this bootcamp");
 
   const newCourse = await Course.create({
     ...req.body,
@@ -81,10 +78,7 @@ const updateCourse = asyncHandler(async (req, res, next) => {
   });
 
   if (!findCourse && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The user with id ${req.user._id} is not allowed to update the course of id ${req.params.id}`
-    );
+    throw createError(400, "Not authorize to update this course");
 
   const editCourse = await Course.findByIdAndUpdate(req.params.id, req.body);
 
@@ -109,10 +103,7 @@ const deleteCourse = asyncHandler(async (req, res, next) => {
   });
 
   if (!findCourse && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The user with id ${req.user._id} is not allowed to delete the course of id ${req.params.id}`
-    );
+    throw createError(400, "Not authorize to update this course");
 
   await deleteCourse.remove();
   res.status(204).send({ status: "success", data: {} });

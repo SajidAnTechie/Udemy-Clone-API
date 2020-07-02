@@ -45,10 +45,7 @@ const updateBootcamps = asyncHandler(async (req, res, next) => {
 
   //check if user is owner of the bootcamp or is admin
   if (!bootcamp && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The User with ${req.user._id} is not allowed to acces this route`
-    );
+    throw createError(400, "Not authorize to update this bootcamp");
 
   const editBootcamp = await Bootcamp.findByIdAndUpdate(
     req.params.id,
@@ -83,10 +80,7 @@ const deleteBootcamps = asyncHandler(async (req, res, next) => {
 
   //check if user is owner of the bootcamp or is admin
   if (!bootcamp && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The User with ${req.user._id} is not allowed to acces this route`
-    );
+    throw createError(400, "Not authorize to delete this bootcamp");
 
   await deleteBootcamp.remove();
   res.status(204).send({
@@ -130,10 +124,7 @@ const bootcampUploadPhoto = asyncHandler(async (req, res, next) => {
 
   //check if user is owner of the bootcamp or is admin
   if (!bootcamp && req.user.role !== "Admin")
-    throw createError(
-      400,
-      `The User with ${req.user._id} is not allowed to acces this route`
-    );
+    throw createError(400, "Not authorize to this bootcamp");
 
   if (!req.files) throw createError(400, "Please add a photo");
 

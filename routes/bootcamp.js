@@ -10,7 +10,7 @@ const {
 
 //Invoked middleware.
 const advanceResults = require("../middleware/advanceResults");
-const { Protect, Permission } = require("../middleware/auth");
+const { protect, permission } = require("../middleware/auth");
 
 //Bootcamp model
 const Bootcamp = require("../models/Bootcamp");
@@ -30,12 +30,12 @@ router
     advanceResults(Bootcamp, { path: "Courses", select: "title description" }),
     getAllbootcamps
   )
-  .post(Protect, Permission("Admin", "Publisher"), createBootcamps);
+  .post(protect, permission("admin", "publisher"), createBootcamps);
 router.route("/:id/photo").put(Protect, bootcampUploadPhoto);
 router
   .route("/:id")
   .get(getBootcamps)
-  .put(Protect, Permission("Admin", "Publisher"), updateBootcamps)
-  .delete(Protect, Permission("Admin", "Publisher"), deleteBootcamps);
+  .put(protect, permission("admin", "publisher"), updateBootcamps)
+  .delete(protect, permission("admin", "publisher"), deleteBootcamps);
 
 module.exports = router;

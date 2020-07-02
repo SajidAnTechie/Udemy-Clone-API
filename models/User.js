@@ -26,8 +26,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["User", "Publisher"],
-    default: "User",
+    enum: ["user", "publisher"],
+    default: "user",
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
@@ -42,7 +42,6 @@ UserSchema.pre("save", async function (next) {
     next();
   }
   const SaltFactor = await bcrypt.genSalt(10);
-  console.log(SaltFactor);
 
   this.password = await bcrypt.hash(this.password, SaltFactor);
 

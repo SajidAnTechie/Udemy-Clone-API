@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const bootcampRouter = require("./routes/bootcamp");
 const courseRouter = require("./routes/course");
 const authRouter = require("./routes/auth");
+const userRouter = require("./routes/users");
 const path = require("path");
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/v1/bootcamp", bootcampRouter);
 app.use("/api/v1/course", courseRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
 
 app.use(unknownEndpoints);
 app.use(errorHandler);

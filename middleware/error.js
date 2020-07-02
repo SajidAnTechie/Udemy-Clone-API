@@ -10,7 +10,7 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === "CastError" && err.kind === "ObjectId") {
     return res.status(404).send({
       status: "Error",
-      error: `Bootcamp is not found with id of ${err.value}`,
+      error: `resource is not found with id of ${err.value}`,
     });
   }
 

@@ -10,7 +10,7 @@ const router = require("express").Router({ mergeParams: true });
 
 //Invoked middleware
 const advanceResults = require("../middleware/advanceResults");
-const { Protect, Permission } = require("../middleware/auth");
+const { protect, permission } = require("../middleware/auth");
 
 //Course model
 const Course = require("../models/Course");
@@ -21,11 +21,11 @@ router
     advanceResults(Course, { path: "bootcamp", select: "name description" }),
     getCourses
   )
-  .post(Protect, Permission("Admin", "Publisher"), createCourse);
+  .post(protect, permission("admin", "publisher"), createCourse);
 router
   .route("/:id")
   .get(getCourse)
-  .put(Protect, Permission("Admin", "Publisher"), updateCourse)
-  .delete(Protect, Permission("Admin", "Publisher"), deleteCourse);
+  .put(protect, permission("admin", "publisher"), updateCourse)
+  .delete(protect, permission("admin", "publisher"), deleteCourse);
 
 module.exports = router;
