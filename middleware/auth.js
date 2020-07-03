@@ -7,6 +7,7 @@ const protect = asyncHandler(async (req, res, next) => {
   const authorization = req.headers["authorization"];
   if (!(authorization && authorization.toLowerCase().startsWith("bearer")))
     throw createError(401, "Not authorized");
+  //Or check for cookie...
 
   const token = authorization.split(" ")[1];
 

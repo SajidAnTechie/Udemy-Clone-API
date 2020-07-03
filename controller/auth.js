@@ -150,6 +150,14 @@ const sendTokenResponse = (user, statusCode, res) => {
     .send({ status: "success", token });
 };
 
+const logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expire: new Date(Date.now() * 10 * 60 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).send({ status: "success", data: {} });
+});
+
 module.exports = {
   RegisterUser,
   login,
@@ -157,4 +165,5 @@ module.exports = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  logout,
 };

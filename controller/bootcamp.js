@@ -5,6 +5,7 @@ const geocoder = require("../utilis/geocoder");
 const Bootcamp = require("../models/Bootcamp");
 
 const getAllbootcamps = asyncHandler(async (req, res, next) => {
+  console.log(req.cookies);
   res.status(200).send(res.advanceResults);
 });
 
