@@ -5,12 +5,11 @@ const unknownEndpoints = () => {
 };
 
 const errorHandler = (err, req, res, next) => {
-  console.log(err);
   //Mongoose Bad ObjectId
   if (err.name === "CastError" && err.kind === "ObjectId") {
     return res.status(404).send({
       status: "Error",
-      error: `resource is not found with id of ${err.value}`,
+      error: `Resource is not found`,
     });
   }
 
