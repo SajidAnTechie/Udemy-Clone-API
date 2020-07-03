@@ -70,8 +70,12 @@ const createCourse = asyncHandler(async (req, res, next) => {
 });
 
 const updateCourse = asyncHandler(async (req, res, next) => {
-  //Check if user is owner of the course
+  const course = await Course.findById(req.params.id);
 
+  if (!course)
+    throw createError(404, `Course is not found with id of ${req.params.id}`);
+
+  //Check if user is owner of the course
   const findCourse = await Course.findOne({
     _id: req.params.id,
     user: req.user._id,
@@ -80,14 +84,38 @@ const updateCourse = asyncHandler(async (req, res, next) => {
   if (!findCourse && req.user.role !== "Admin")
     throw createError(400, "Not authorize to update this course");
 
-  const editCourse = await Course.findByIdAndUpdate(req.params.id, req.body);
-
-  if (!editCourse)
-    throw createError(404, `Course is not found with id of ${req.params.id}`);
+  const editCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
   const updatedCourse = await Course.findById(req.params.id);
 
-  res.status(201).send({ status: "success", data: updatedCourse });
+  res.status(200).send({ status: "success", data: updatedCourse });
+});
+
+const updateTutuionCost = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+
+  if (!course)
+    throw createError(404, `Course is not found with id of ${req.params.id}`);
+
+  //Check if user is owner of the course
+  const findCourse = await Course.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  if (!findCourse && req.user.role !== "Admin")
+    throw createError(400, "Not authorize to update this course");
+
+  course.tuition = req.body.newTutionCost;
+
+  await course.save();
+
+  const updatedCourse = await Course.findById(req.params.id);
+
+  res.status(200).send({ status: "success", data: updatedCourse });
 });
 
 const deleteCourse = asyncHandler(async (req, res, next) => {
@@ -115,4 +143,5 @@ module.exports = {
   createCourse,
   updateCourse,
   deleteCourse,
+  updateTutuionCost,
 };

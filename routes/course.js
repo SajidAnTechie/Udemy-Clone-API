@@ -4,6 +4,7 @@ const {
   createCourse,
   updateCourse,
   deleteCourse,
+  updateTutuionCost,
 } = require("../controller/course");
 
 const router = require("express").Router({ mergeParams: true });
@@ -27,5 +28,9 @@ router
   .get(getCourse)
   .put(protect, permission("admin", "publisher"), updateCourse)
   .delete(protect, permission("admin", "publisher"), deleteCourse);
+
+router
+  .route("/updateTutionCost/:id")
+  .put(protect, permission("admin", "publisher"), updateTutuionCost);
 
 module.exports = router;

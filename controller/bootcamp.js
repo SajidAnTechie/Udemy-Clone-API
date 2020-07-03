@@ -38,13 +38,18 @@ const createBootcamps = asyncHandler(async (req, res, next) => {
 });
 
 const updateBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findOne({
+  const bootcamp = await Bootcamp.findById(req.params.id);
+
+  if (!bootcamp)
+    throw createError(404, `Bootcamp is not found of id ${req.params.id}`);
+
+  const findbootcamp = await Bootcamp.findOne({
     _id: req.params.id,
     user: req.user._id,
   });
 
-  //check if user is owner of the bootcamp or is admin
-  if (!bootcamp && req.user.role !== "Admin")
+  //check if user is owner of the bootcamp or user is admin
+  if (!findbootcamp && req.user.role !== "Admin")
     throw createError(400, "Not authorize to update this bootcamp");
 
   const editBootcamp = await Bootcamp.findByIdAndUpdate(
@@ -55,9 +60,6 @@ const updateBootcamps = asyncHandler(async (req, res, next) => {
       runValidators: true,
     }
   );
-
-  if (!editBootcamp)
-    throw createError(404, `Bootcamp is not found of id ${req.params.id}`);
 
   const updatedBootcamp = await Bootcamp.findById(req.params.id);
 
@@ -78,7 +80,7 @@ const deleteBootcamps = asyncHandler(async (req, res, next) => {
     user: req.user._id,
   });
 
-  //check if user is owner of the bootcamp or is admin
+  //check if user is owner of the bootcamp or user is admin
   if (!bootcamp && req.user.role !== "Admin")
     throw createError(400, "Not authorize to delete this bootcamp");
 
