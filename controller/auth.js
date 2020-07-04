@@ -30,6 +30,7 @@ const updateDetails = asyncHandler(async (req, res, next) => {
     email: req.body.email,
   };
 
+  console.log(req.user);
   const editDetails = await User.findByIdAndUpdate(req.user._id, newDetails, {
     new: true,
     runValidators: true,
